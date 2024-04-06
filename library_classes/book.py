@@ -2,7 +2,7 @@ import re
 
 # A class representing individual books with attributes such as title, author, ISBN, genre, publication date, and availability status.
 class Book:
-    def __init__(self, title, author, isbn, genre, publication_date, availability="available"):
+    def __init__(self, title, author, isbn, genre, publication_date, availability=True):
         self.__title = title
         self.__author = author
         self.__isbn = isbn
@@ -18,7 +18,8 @@ class Book:
         self.__isbn = None
         self.__genre = None
         self.__publication_date = None
-        self._availability = "available"
+        self._is_available = True
+        self.__borrower = None
         
     def get_title(self):
         return self.__title
@@ -66,9 +67,14 @@ class Book:
         else:
             print("Error: Publication date must be in format MM/DD/YYYY")
     
-    def get_availability(self):
-        return self._availability
+    def get_is_available(self):
+        return self._is_available
     
-    def set_availability(self, updated_availability):
-        # TO-DO: add validation?
-        self._availability = updated_availability
+    def set_is_available(self, new_status):
+        self._is_available = new_status
+
+    def get_borrower(self):
+        return self.__borrower
+    
+    def set_borrower(self, user):
+        self.__borrower = user
