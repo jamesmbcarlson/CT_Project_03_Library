@@ -2,17 +2,8 @@ import re
 
 # A class representing individual books with attributes such as title, author, ISBN, genre, publication date, and availability status.
 class Book:
-    def __init__(self, title, author, isbn, genre, publication_date, availability=True):
-        self.__title = title
-        self.__author = author
-        self.__isbn = isbn
-        self.__genre = genre
-        self.__publication_date = publication_date
-        self._availability = availability
-        # I made availability protected instead of private because it would be changed regularly,
-        # whereas the other fields should theoretically be totally static
 
-    def __init__(self): # TO-DO: this actually makes the one above defunct; I can't access it from my library 
+    def __init__(self):
         self.__title = None
         self.__author = None
         self.__isbn = None

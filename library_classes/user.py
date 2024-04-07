@@ -22,15 +22,7 @@ class User:
         return self.__library_id
     
     def set_library_id(self, new_id):
-        # ?? maybe just an int?
-        try:
-            check_for_int = int(new_id)
-            if check_for_int <= 0:
-                give_me_an_error = check_for_int/0 # just trying a different validation method other than regex haha
-        except:
-            print("Error: Library ID must be a whole number greater than 0.")
-        else:
-            self.__library_id = new_id
+        self.__library_id = new_id
 
     def get_borrowed_books(self):
         return self._borrowed_books
