@@ -27,6 +27,9 @@ class Author:
 
     def get_books_in_library(self):
         return self._books_in_library
+    
+    def set_books_in_library(self, list_of_books):
+        self._books_in_library = list_of_books
 
     def add_to_books_in_library(self, book):
         self._books_in_library.append(book)

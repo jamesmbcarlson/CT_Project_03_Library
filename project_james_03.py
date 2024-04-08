@@ -3,7 +3,8 @@
 # Module 4: Mini-Project | Contact Management System
 
 import re
-from library_classes.book import Book
+import os
+from library_classes.book import Book, FantasyBook, SciFiBook, NonFictionBook
 from library_classes.user import User
 from library_classes.author import Author
 
@@ -13,6 +14,8 @@ F_RED = "\033[91m"
 F_YELLOW = "\033[93m"
 F_GREEN = "\033[92m"
 F_RESET = "\033[0m"
+
+DEFAULT_FILENAME = "library_data/library_export.txt"
 
 # our database! 
 library_books = []
@@ -31,7 +34,9 @@ def menu_main():
         print(f"{F_YELLOW}1{F_RESET}. Book Operations")
         print(f"{F_YELLOW}2{F_RESET}. User Operations")
         print(f"{F_YELLOW}3{F_RESET}. Author Operations")
-        print(f"{F_YELLOW}4{F_RESET}. Quit")
+        print(f"{F_YELLOW}4{F_RESET}. Export Library to File")
+        print(f"{F_YELLOW}5{F_RESET}. Import Library from File")
+        print(f"{F_YELLOW}6{F_RESET}. Quit")
 
         # get and handle user input
         menu_input = input("Make a selection: ").casefold()
@@ -41,7 +46,11 @@ def menu_main():
             menu_user_operations()
         elif menu_input == "3" or menu_input.startswith("author"):
             menu_author_operations()
-        elif menu_input == "4" or menu_input.startswith("quit"):
+        elif menu_input == "4" or menu_input.startswith("export"):
+            export_library_to_text()
+        elif menu_input == "5" or menu_input.startswith("import"):
+            import_library_from_text()
+        elif menu_input == "6" or menu_input.startswith("quit"):
             print("Thank you for using the Library Management System!")
             return
         else:
@@ -55,25 +64,28 @@ def menu_book_operations():
         # print menu to terminal
         print(f"\n{F_UNDERLINE}Book Operations:{F_RESET}")
         print(f"{F_YELLOW}1{F_RESET}. Add a new book")
-        print(f"{F_YELLOW}2{F_RESET}. Borrow a book")
-        print(f"{F_YELLOW}3{F_RESET}. Return a book")
-        print(f"{F_YELLOW}4{F_RESET}. Search for a book")
-        print(f"{F_YELLOW}5{F_RESET}. Display all books")
-        print(f"{F_YELLOW}6{F_RESET}. Return to main menu")
+        print(f"{F_YELLOW}2{F_RESET}. Add a new book by genre")
+        print(f"{F_YELLOW}3{F_RESET}. Borrow a book")
+        print(f"{F_YELLOW}4{F_RESET}. Return a book")
+        print(f"{F_YELLOW}5{F_RESET}. Search for a book")
+        print(f"{F_YELLOW}6{F_RESET}. Display all books")
+        print(f"{F_YELLOW}7{F_RESET}. Quit to main menu")
 
         # get and handle user input
         menu_input = input("Make a selection: ").casefold()
-        if menu_input == "1" or menu_input.startswith("add"):
-            book_add()
-        elif menu_input == "2" or menu_input.startswith("borrow"):
+        if menu_input == "1" or (menu_input.startswith("add") and "genre" not in menu_input):
+            book_add("")
+        elif menu_input == "2" or "genre" in menu_input:
+            menu_book_add_genre()
+        elif menu_input == "3" or menu_input.startswith("borrow"):
             book_borrow_submenu()
-        elif menu_input == "3" or menu_input.startswith("return"):
+        elif menu_input == "4" or menu_input.startswith("return"):
             book_return_submenu()
-        elif menu_input == "4" or menu_input.startswith("search"):
+        elif menu_input == "5" or menu_input.startswith("search"):
             book_search()
-        elif menu_input == "5" or menu_input.startswith("display"):
+        elif menu_input == "6" or menu_input.startswith("display"):
             book_display_all()
-        elif menu_input == "6" or menu_input.startswith("return"):
+        elif menu_input == "7" or menu_input.startswith("quit"):
             return
         else:
             print("Invalid input. Please make a selection from the menu.")
@@ -128,12 +140,44 @@ def menu_author_operations():
         else:
             print("Invalid input. Please make a selection from the menu.")
 
-def book_add():
+def menu_book_add_genre():
+    '''
+    Display options for adding books by genre.
+    '''
+    while True:
+        # print menu to terminal
+        print(f"\n{F_UNDERLINE}Add Book by Genre:{F_RESET}")
+        print(f"{F_YELLOW}1{F_RESET}. Add Fantasy Book")
+        print(f"{F_YELLOW}2{F_RESET}. Add Science Fiction Book")
+        print(f"{F_YELLOW}3{F_RESET}. Add Non-Fiction Book")
+        print(f"{F_YELLOW}4{F_RESET}. Return to Book Operations Menu")
+
+        # get and handle user input
+        menu_input = input("Make a selection: ").casefold()
+        if menu_input == "1" or "fantasy" in  menu_input:
+            book_add("fantasy")
+        elif menu_input == "2" or "science" in menu_input:
+            book_add("scifi")
+        elif menu_input == "3" or "non" in menu_input:
+            book_add("nonfiction")
+        elif menu_input == "4" or menu_input.startswith("return"):
+            return
+        else:
+            print("Invalid input. Please make a selection from the menu.")
+
+def book_add(genre):
     '''
     Add a book to the library.
     '''
     # create new book and set its values with the input below
-    new_book = Book()
+    if genre == "fantasy":
+        new_book = FantasyBook()
+    elif genre == "scifi":
+        new_book = SciFiBook()
+    elif genre == "nonfiction":
+        new_book = NonFictionBook()
+    else:
+        new_book = Book()
 
     print()
     while(new_book.get_title() == None):
@@ -169,7 +213,7 @@ def book_borrow_submenu():
 
     # escape if book not found
     if book_to_borrow == None:
-        print("Sorry! Returning to Main Menu.")
+        print("Sorry! Returning to menu.")
         return
     
     # if book is found
@@ -184,7 +228,6 @@ def book_borrow_submenu():
         # book is found, but not available to borrow
         else:
             print(f"{book_title} is unavailable to borrow. Sorry for the inconvenience!")
-            print("Returning to Main Menu.")
 
 def book_borrow(book):
     '''
@@ -195,17 +238,17 @@ def book_borrow(book):
         return
 
     # get user to loan book to
-    user = search_users_by_keyword(input("\nWhich user would like to borrow this book? "))
+    user = search_users_by_keyword(input("\nWhich user would like to borrow this book? "), True)
 
     # user not found
     if user == None:
-        print("User not found. Returning to Main Menu.")
+        print("User not found. Returning to menu.")
 
     # book successfully loaned out to specified user
     else:
-        user.add_to_borrowed_books(book)
+        user.add_to_borrowed_books(book.get_title())
         book.set_is_available(False)
-        book.set_borrower(user)
+        book.set_borrower(user.get_name())
         print(f"\n\"{book.get_title()}\" has been loaned out to {user.get_name()}!")
 
 def book_return_submenu():
@@ -221,7 +264,7 @@ def book_return_submenu():
 
     # escape if book not found
     if book_to_return == None:
-        print("No books have been returned. Returning to Main Menu.")
+        print("No books have been returned. Returning to menu.")
         return
     
     # if book is found
@@ -234,13 +277,13 @@ def book_return_submenu():
         # book is found, but is already available
         else:
             print(f"{book_to_return.get_title()} is already available to borrow. It may have already been returned.")
-            print("Returning to Main Menu.") 
 
 def book_return(book):
     '''
     Return given book to library system.
     '''
-    user = book.get_borrower()
+    user_name = book.get_borrower()
+    user = search_users_by_keyword(user_name, False)
     user.remove_from_borrowed_books(book.get_title())
     book.set_borrower = None
     book.set_is_available(True)
@@ -318,7 +361,7 @@ def book_display_one(book):
         print("Availability Status: Available")
     else:
         print("Availability Status: Currently Unavailable")
-        print(f"Borrowed by User: {book.get_borrower().get_name()}, {book.get_borrower().get_library_id()}")
+        print(f"Borrowed by User: {book.get_borrower()}")
 
 def book_display_all():
     '''
@@ -361,7 +404,7 @@ def user_details():
     if is_library_users_empty():
         return
 
-    user_to_view = search_users_by_keyword(input("\nWhich user would you like to view details for? "))
+    user_to_view = search_users_by_keyword(input("\nWhich user would you like to view details for? "), True)
     if user_to_view:
         user_display_one(user_to_view)
 
@@ -370,7 +413,7 @@ def user_display_one(user):
     Display details of a given user
     '''
     print(f"\nName: {F_GREEN}{user.get_name()}{F_RESET}")
-    print(f"Library ID: {str(user.get_library_id()).zfill(8)}")
+    print(f"Library ID: {user.get_library_id()}")
     books_list = user.get_borrowed_books()
     books_list_output = ""
     if books_list == []:
@@ -378,9 +421,9 @@ def user_display_one(user):
     else:
         for book in books_list:
             if books_list.index(book) == len(books_list) - 1:
-                books_list_output += book.get_title()
+                books_list_output += book
             else:
-                books_list_output += f"{book.get_title()}, "
+                books_list_output += f"{book}, "
     print(f"Borrowed Books: {books_list_output}")
 
 def user_display_all():
@@ -424,10 +467,10 @@ def author_add_via_book_add(author_name, book):
         new_author = Author()
         new_author.set_name(author_name)
         library_authors.append(new_author)
-        new_author.add_to_books_in_library(book)
+        new_author.add_to_books_in_library(book.get_title())
     else:
         # add given book to list of their works
-        author.add_to_books_in_library(book)
+        author.add_to_books_in_library(book.get_title())
 
 def author_details():
     '''
@@ -454,9 +497,9 @@ def author_display_one(author):
     else:
         for book in books_list:
             if books_list.index(book) == len(books_list) - 1:
-                books_list_output += book.get_title()
+                books_list_output += book
             else:
-                books_list_output += f"{book.get_title()}, "
+                books_list_output += f"{book}, "
     print(f"Books in Library: {books_list_output}")
 
 def author_display_all():
@@ -497,7 +540,7 @@ def search_books_by_keyword(keyword):
     print(f"\nNo book found with search term \"{keyword}\"")
     return None
 
-def search_users_by_keyword(keyword):
+def search_users_by_keyword(keyword, ask_for_confirmation):
     '''
     Loop through name and library_id in all users looking for given search term. Returns user if found. Otherwise returns None.
     '''
@@ -506,19 +549,23 @@ def search_users_by_keyword(keyword):
         user_details = [user.get_name(), user.get_library_id()]
         for value in user_details:
             if keyword.casefold() in str(value).casefold():
-                print(f"{F_YELLOW}Found the following user:{F_RESET}")
-                user_display_one(user)
-                while True:
-                    confirm_input = input("\nIs this the user you are looking for? (yes/no): ").casefold()                
-                    if confirm_input == "yes" or confirm_input == "y":
-                        return user
-                    # otherwise, keep searching!
-                    elif confirm_input == "no" or confirm_input == "n":
-                        break
-                    else:
-                        print("Invalid input. Please enter \"yes\" or \"no\"")
+                if ask_for_confirmation:
+                    print(f"{F_YELLOW}Found the following user:{F_RESET}")
+                    user_display_one(user)
+                    while True:
+                        confirm_input = input("\nIs this the user you are looking for? (yes/no): ").casefold()                
+                        if confirm_input == "yes" or confirm_input == "y":
+                            return user
+                        # otherwise, keep searching!
+                        elif confirm_input == "no" or confirm_input == "n":
+                            break
+                        else:
+                            print("Invalid input. Please enter \"yes\" or \"no\"")
+                else:
+                    return user
     # if no one found:
-    print(f"\nNo user found with search term \"{keyword}\"")
+    if ask_for_confirmation:
+        print(f"\nNo user found with search term \"{keyword}\"")
     return None
 
 def search_authors_by_name(name, ask_for_confirmation):
@@ -544,7 +591,8 @@ def search_authors_by_name(name, ask_for_confirmation):
             else:
                 return author
     # if no one found:
-    print(f"\nNo author found with search term \"{name}\"")
+    if ask_for_confirmation:
+        print(f"\nNo author found with search term \"{name}\"")
     return None
 
 def is_library_books_empty():
@@ -576,6 +624,185 @@ def is_library_authors_empty():
         return True
     else:
         return False
+    
+def export_library_to_text():
+    '''
+    Export stored library to text file.
+    '''
+    if library_books == [] and library_users == [] and library_authors == []:
+        print("Your library is empty. No export will be performed.")
+        return
+    
+     # warn for overwrite
+    if os.path.isfile(DEFAULT_FILENAME):
+        while True:
+            print(f"{F_RED}Warning!{F_RESET} A file already exists at \"{DEFAULT_FILENAME}\"\
+                \n{F_RED}Exporting your library will overwrite this file.{F_RESET}")
+            confirm = input("Would you like to overwrite your current library file? (yes/no) ")
+            if confirm == "yes" or confirm == "y":
+                break
+            elif confirm == "no" or confirm == "n":
+                print("Your library will not be exported.")
+                return
+            else:
+                print("Invalid input. Please enter \"yes\" or \"no\"")
+
+    try:
+        # makes a new directory
+        os.makedirs("library_data", exist_ok=True)
+
+        # writing to our text file
+        with open(DEFAULT_FILENAME, "w") as file:
+            # write all library books to file
+            if library_books != []:
+                file.write("LIBRARY BOOKS:\n\n")
+                for book in library_books:
+                    file.write(f"Title: {book.get_title()}\n")
+                    file.write(f"Author: {book.get_author()}\n")
+                    file.write(f"ISBN: {book.get_isbn()}\n")
+                    file.write(f"Genre: {book.get_genre()}\n")
+                    file.write(f"Publication Date: {book.get_publication_date()}\n")
+                    file.write(f"Availability: {book.get_is_available()}\n")
+                    file.write(f"Borrower: {book.get_borrower()}\n\n")
+                file.write("\n")
+                    
+            # write all library users to file
+            if library_users != []:
+                file.write("LIBRARY USERS:\n\n")
+                for user in library_users:
+                    file.write(f"User Name: {user.get_name()}\n")
+                    file.write(f"Library ID: {user.get_library_id()}\n")
+                    file.write(f"Borrowed Books: {user.get_borrowed_books()}\n\n")
+                file.write("\n")
+
+            # write all authors in library to file
+            if library_authors != []:
+                file.write("LIBRARY AUTHORS:\n\n")
+                for author in library_authors:
+                    file.write(f"Author Name: {author.get_name()}\n")
+                    file.write(f"Biography: {author.get_biography()}\n")
+                    file.write(f"Books in Library: {author.get_books_in_library()}\n\n")
+                file.write("\n")
+
+    except PermissionError:
+        print(f"You don't have permission to write to file \"{DEFAULT_FILENAME}\"")
+        print("Your library has not been exported.")
+    except IOError:
+        print("An IOError has occured while writing to this file.")
+        print("Your library has not been exported.")
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Your library has not been exported.")
+    else:
+        print(f"Your library has been exported to file: \"{DEFAULT_FILENAME}\"")
+    finally:
+        print("---")
+
+def import_library_from_text():
+    '''
+    Import library from text file.
+    '''
+    global library_books, library_users, library_authors
+
+    # warn for overwrite
+    if len(library_books) > 0 or len(library_users) > 0 or len(library_authors) > 0:
+        while True:
+            print(f"{F_RED}Warning! Importing library file will overwrite your current library.{F_RESET}")
+            confirm = input("Would you like to overwrite your current library? (yes/no) ")
+            if confirm == "yes" or confirm == "y":
+                break
+            elif confirm == "no" or confirm == "n":
+                print("No new library will be imported.")
+                return
+            else:
+                print("Invalid input. Please enter \"yes\" or \"no\"")
+
+    # reset library data
+    library_books.clear()
+    library_users.clear()
+    library_authors.clear()
+    global user_id_increment
+    user_id_increment = 1
+
+    # read from file and fill in library
+    try:
+        with open(DEFAULT_FILENAME, "r") as file:
+            data = file.readlines()
+            for line in data:
+
+                # import books
+                if line.startswith("Title: "):
+                    imported_book = Book()
+                    imported_book.set_title(get_imported_value(line))
+                elif line.startswith("Author: "):
+                    imported_book.set_author(get_imported_value(line))
+                elif line.startswith("ISBN: "):
+                    imported_book.set_isbn(get_imported_value(line))
+                elif line.startswith("Genre: "):
+                    imported_book.set_genre(get_imported_value(line))
+                elif line.startswith("Publication Date: "):
+                    imported_book.set_publication_date(get_imported_value(line))
+                elif line.startswith("Availability: "):
+                    if get_imported_value(line) == "True":
+                        imported_book.set_is_available(True)
+                    else:
+                        imported_book.set_is_available(False)
+                elif line.startswith("Borrower: "):
+                    imported_book.set_borrower(get_imported_value(line))
+                    library_books.append(imported_book)
+
+                # import users
+                elif line.startswith("User Name: "):
+                    imported_user = User()
+                    imported_user.set_name(get_imported_value(line))
+                elif line.startswith("Library ID: "):
+                    new_id = get_imported_value(line)
+                    imported_user.set_library_id(new_id)
+                    if int(new_id) >= user_id_increment:
+                        user_id_increment = int(new_id) + 1
+                elif line.startswith("Borrowed Books: "):
+                    imported_user.set_borrowed_books(get_imported_list(line))
+                    library_users.append(imported_user)
+
+                # import authors
+                if line.startswith("Author Name: "):
+                    imported_author = Author()
+                    imported_author.set_name(get_imported_value(line))
+                elif line.startswith("Biography: "):
+                    imported_author.set_biography(get_imported_value(line))
+                elif line.startswith("Books in Library: "):
+                    imported_author.set_books_in_library(get_imported_list(line))
+                    library_authors.append(imported_author)
+                
+    except FileNotFoundError:
+        print("This file could not be found. Import failed.")
+    except Exception as e:
+        print(f"Error: {e}")
+    else:
+        print(f"{F_GREEN}A new library has been imported!{F_RESET}")
+    finally:
+        print("---")
+
+def get_imported_value(data):
+    '''
+    Get value from line of data in import.
+    '''
+    result = re.search(r": (.*)", data).group(1)
+    if result == "None":
+        return None
+    else:
+        return result
+    
+def get_imported_list(data):
+    '''
+    Get list of values from line of data in import.
+    '''
+    list_string = re.search(r": \[(.*)\]", data).group(1)
+    list = list_string.split(",")
+    # known issue: if a book title contains a comma, it will pass through this import process as multiple book titles
+    if list == ['']:
+        list.clear()
+    return list
 
 # Computer, run program!
 print("\nWelcome to the Library Management System!")

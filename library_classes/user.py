@@ -22,10 +22,14 @@ class User:
         return self.__library_id
     
     def set_library_id(self, new_id):
-        self.__library_id = new_id
+        # sets user id to 8 digit identifier
+        self.__library_id = str(new_id).zfill(8)
 
     def get_borrowed_books(self):
         return self._borrowed_books
+    
+    def set_borrowed_books(self, list_of_books):
+        self._borrowed_books = list_of_books
 
     def add_to_borrowed_books(self, book):
         self._borrowed_books.append(book)

@@ -11,7 +11,9 @@ class Book:
         self.__publication_date = None
         self._is_available = True
         self.__borrower = None
-        
+    
+    # getters and setters for all values
+
     def get_title(self):
         return self.__title
     
@@ -33,9 +35,9 @@ class Book:
     def get_isbn(self):
         return self.__isbn
     
-    # I looked up how to actually determine ISBNs (https://en.wikipedia.org/wiki/ISBN), and it's crazy, so I just went with this:
     def set_isbn(self, new_isbn):
-        if re.search(r"^(978|979)[\d]{10}$", new_isbn):
+        isbn_ignore_dashes = str(new_isbn).replace("-", "")
+        if re.search(r"^(978|979)[\d]{10}$", isbn_ignore_dashes):
             self.__isbn = new_isbn
         else:
             print("Error: ISBN must be 13 digits and begin with either 978 or 979.")
@@ -69,3 +71,19 @@ class Book:
     
     def set_borrower(self, user):
         self.__borrower = user
+
+# book subclasses
+class FantasyBook(Book):
+    def __init__(self):
+        super().__init__()
+        self.set_genre("Fantasy")
+
+class SciFiBook(Book):
+    def __init__(self):
+        super().__init__()
+        self.set_genre("Science Fiction")
+
+class NonFictionBook(Book):
+    def __init__(self):
+        super().__init__()
+        self.set_genre("Non-Fiction")

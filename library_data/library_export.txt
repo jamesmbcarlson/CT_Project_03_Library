@@ -1,0 +1,68 @@
+LIBRARY BOOKS:
+
+Title: Elantris
+Author: Brandon Sanderson
+ISBN: 978-0-7653-8102-6
+Genre: Fantasy
+Publication Date: 04/21/2005
+Availability: False
+Borrower: James Carlson
+
+Title: Star Wars: Heir to the Empire
+Author: Timothy Zahn
+ISBN: 978-0-553-29612-9
+Genre: Science Fiction
+Publication Date: 05/01/1991
+Availability: True
+Borrower: None
+
+Title: Born a Crime
+Author: Trevor Noah
+ISBN: 978-0-399-58817-4
+Genre: Non-Fiction
+Publication Date: 11/15/2016
+Availability: True
+Borrower: None
+
+Title: Mistborn: The Final Empire
+Author: Brandon Sanderson
+ISBN: 978-0-7653-1178-8
+Genre: Fantasy
+Publication Date: 07/17/2006
+Availability: True
+Borrower: None
+
+
+LIBRARY USERS:
+
+User Name: James Carlson
+Library ID: 00000001
+Borrowed Books: [Elantris]
+
+User Name: Megan Carlson
+Library ID: 00000002
+Borrowed Books: []
+
+User Name: Hugh Jackman
+Library ID: 00000003
+Borrowed Books: []
+
+
+LIBRARY AUTHORS:
+
+Author Name: Brandon Sanderson
+Biography: None
+Books in Library: [Elantris, Mistborn: The Final Empire]
+
+Author Name: Timothy Zahn
+Biography: None
+Books in Library: [Star Wars: Heir to the Empire]
+
+Author Name: Trevor Noah
+Biography: None
+Books in Library: [Born a Crime]
+
+Author Name: Patrick Rothfuss
+Biography: Patrick James Rothfuss (born June 6, 1973) is an American author. He is best known for his series The Kingkiller Chronicle, beginning with Rothfuss' debut novel, The Name of the Wind (2007), which won several awards, and continuing in the sequel, The Wise Man's Fear (2011), which topped the The New York Times Best Seller list.
+Books in Library: []
+
